@@ -1,0 +1,37 @@
+version: '2'
+services:
+  apache:
+    image: usdaeas/gov-drupal:php70
+    environment:
+      DOCROOT: /var/application/www
+      GIT_BRANCH: dev
+      GIT_URL: https://TOKEN:x-oauth-basic@github.com/usda-ocio-eas/sawyer.git
+    stdin_open: true
+    external_links:
+    - sawyer-db-dev/sawyer-db-dev:db
+    volumes:
+    - /mnt/nfs/sawyer-dev/public-content/:/mnt/public-content/
+    - /mnt/nfs/sawyer-dev/settings-php/:/mnt/settings-php/
+    - /mnt/nfs/sawyer-dev/private-content/:/mnt/private-content/
+    - /mnt/nfs/sawyer-dev/backups/:/mnt/backups/
+    - /mnt/nfs/sawyer-dev/simplesamlphp:/var/simplesamlphp
+    tty: true
+    labels:
+      io.rancher.container.pull_image: always
+  webbackend:
+    image: rancher/lb-service-haproxy:v0.7.9
+    expose:
+    - 80:80/tcp
+    labels:
+      io.rancher.container.agent.role: environmentAdmin
+      io.rancher.container.create_agent: 'true'
+  Varnish:
+    image: usdaoc/varnish-cache
+    environment:
+      VARNISH_MEMORY: 256M
+    stdin_open: true
+    tty: true
+    links:
+    - webbackend:webbackend
+    labels:
+      io.rancher.container.pull_image: always

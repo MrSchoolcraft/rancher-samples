@@ -1,0 +1,24 @@
+version: '2'
+services:
+  sawyer-db-dev:
+    image: mariadb
+    environment:
+      MYSQL_DATABASE: drupal
+      MYSQL_ROOT_PASSWORD: ''
+    stdin_open: true
+    volumes:
+    - /app/local/sawyer_dev_db/mysql:/var/lib/mysql
+    tty: true
+    labels:
+      io.rancher.container.pull_image: always
+  sawyer-db-staging:
+    image: mariadb
+    environment:
+      MYSQL_DATABASE: drupal
+      MYSQL_ROOT_PASSWORD: ''
+    stdin_open: true
+    volumes:
+    - /app/local/sawyer_stage_db/mysql:/var/lib/mysql
+    tty: true
+    labels:
+      io.rancher.container.pull_image: always
